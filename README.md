@@ -198,11 +198,11 @@ Now we start run our [Parcel](https://parceljs.org/) application with next comma
 $ yarn parcel src/index.html
 ```
 
-But let's add usefull commands into our `package.json` file
+But let's add useful commands into our `package.json` file
 ```json
 {
    "scripts": {
-    "start": "parcel src/index.html",
+    "start": "parcel src/index.html --open",
     "prebuild": "run-s clean",
     "build": "parcel build src/index.html",
     "clean": "rimraf ./dist"
