@@ -19,6 +19,7 @@
       - [Jest](#jest)
 
 ## Initialize the git repository
+
 ```bash
 $ echo "# react_simple_form" >> README.md
 $ git init
@@ -85,6 +86,7 @@ dist/
 ## Initialize the project
 
 ### Create `package.json` file
+
 ```bash
 $ yarn init
 
@@ -94,15 +96,16 @@ question name (react_app_repo): react_app
 question version (1.0.0): 0.0.1
 question description: React Simple App with Parcel
 question entry point (index.js): src/index.tsx
-question repository url (git@github.com:JohnDoe/react_app_repo.git): 
-question author (John Doe <John.Doe@example.com>): 
-question license (MIT): 
+question repository url (git@github.com:JohnDoe/react_app_repo.git):
+question author (John Doe <John.Doe@example.com>):
+question license (MIT):
 question private: yes
 # success Saved package.json
 # Done in **.**s.
 ```
 
 and add project requirements
+
 ```bash
 $ yarn add react react-dom
 $ yarn add parcel parcel-bundler typescript @types/react @types/react-dom --dev
@@ -112,7 +115,6 @@ Now our `project.json` will looks like
 
 ```json
 {
-
   "name": "react_app",
   "version": "0.0.1",
   "description": "React Simple App with Parcel",
@@ -135,7 +137,6 @@ Now our `project.json` will looks like
   }
 }
 ```
-
 
 ### Create source folder
 
@@ -184,6 +185,7 @@ ReactDOM.render(<App />, app);
 ```
 
 **And the application itself:**
+
 ```javascript
 export function App() {
   return <h1>Hello world!</h1>;
@@ -199,14 +201,15 @@ $ yarn parcel src/index.html
 ```
 
 But let's add useful commands into our `package.json` file
+
 ```json
 {
-   "scripts": {
+  "scripts": {
     "start": "parcel src/index.html --open",
     "prebuild": "run-s clean",
     "build": "parcel build src/index.html",
     "clean": "rimraf ./dist"
-  },
+  }
 }
 ```
 
@@ -233,8 +236,8 @@ We also want to benefit from the type check and other features of **Typescript**
 ```bash
 $ npx tsc --init
 ```
-This command will create `tsconfig.json` with basic configuration.
 
+This command will create `tsconfig.json` with basic configuration.
 
 ### Enable `jsx/tsx` support
 
@@ -242,12 +245,11 @@ To enable `jsx/tsx` files support we must add `"jsx": "react"` config option in 
 
 ```json
 {
-    "jsx": "react",
+  "jsx": "react"
 }
 ```
 
 ## Other tweaks
-
 
 ### [Generating](https://parceljs.org/languages/typescript/#generating-typings) typings.
 
@@ -258,12 +260,13 @@ Use the types field in package.json alongside a target such as main or module to
   "source": "src/index.tsx",
   "module": "dist/index.js",
   "types": "dist/index.d.ts"
- }
+}
 ```
+
 [Type checking](https://parceljs.org/languages/typescript/#type-checking)
 
-
 ### Jest and ESLint
+
 Add dependencies for `jest` and `eslint`:
 
 ```bash
@@ -291,6 +294,7 @@ $ npx eslint --init
 ```
 
 #### Jest
+
 Add jest support for `eslint`. - add jest as env in `.eslintrc.json` or `js`/`yaml` file:
 
 ```json
@@ -303,8 +307,8 @@ And create empty test file `src/index.test.ts` in src folder.
 
 ```typescript
 describe("Empty Test Collection", () => {
-    it("Empty Test", () => {
-        expect(true).toBeTruthy();
-    });
+  it("Empty Test", () => {
+    expect(true).toBeTruthy();
+  });
 });
 ```
