@@ -1,5 +1,23 @@
 # React App
 
+- [React App](#react-app)
+  - [Initialize the git repository](#initialize-the-git-repository)
+    - [Create .gitignore](#create-gitignore)
+  - [Initialize the project](#initialize-the-project)
+    - [Create `package.json` file](#create-packagejson-file)
+    - [Create source folder](#create-source-folder)
+    - [Create html entry point](#create-html-entry-point)
+    - [And our application components](#and-our-application-components)
+  - [Run](#run)
+  - [Build](#build)
+  - [Init **Typescript**](#init-typescript)
+    - [Enable `jsx/tsx` support](#enable-jsxtsx-support)
+  - [Other tweaks](#other-tweaks)
+    - [Generating typings.](#generating-typings)
+    - [Jest and ESLint](#jest-and-eslint)
+      - [ESLint](#eslint)
+      - [Jest](#jest)
+
 ## Initialize the git repository
 ```bash
 $ echo "# react_simple_form" >> README.md
@@ -230,7 +248,8 @@ To enable `jsx/tsx` files support we must add `"jsx": "react"` config option in 
 
 ## Other tweaks
 
-[Generating](https://parceljs.org/languages/typescript/#generating-typings) typings.
+
+### [Generating](https://parceljs.org/languages/typescript/#generating-typings) typings.
 
 Use the types field in package.json alongside a target such as main or module to enable this.
 
@@ -244,11 +263,14 @@ Use the types field in package.json alongside a target such as main or module to
 [Type checking](https://parceljs.org/languages/typescript/#type-checking)
 
 
-Add dependencies:
+### Jest and ESLint
+Add dependencies for `jest` and `eslint`:
 
 ```bash
 $ yarn add jest eslint @eslint/create-config @types/jest eslint-plugin-react@latest, @typescript-eslint/eslint-plugin@latest, @typescript-eslint/parser@latest --dev
 ```
+
+#### ESLint
 
 Initialize the eslint config:
 
@@ -268,7 +290,7 @@ $ npx eslint --init
 }
 ```
 
-## Jest
+#### Jest
 Add jest support for `eslint`. - add jest as env in `.eslintrc.json` or `js`/`yaml` file:
 
 ```json
