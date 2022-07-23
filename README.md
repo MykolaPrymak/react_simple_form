@@ -226,11 +226,11 @@ To enable `jsx/tsx` files support we must add `"jsx": "react"` config option in 
 {
     "jsx": "react",
 }
-'''
+```
 
 ## Other tweaks
 
-[Generating](https://parceljs.org/languages/typescript/#generating-typings) typings
+[Generating](https://parceljs.org/languages/typescript/#generating-typings) typings.
 
 Use the types field in package.json alongside a target such as main or module to enable this.
 
@@ -240,7 +240,7 @@ Use the types field in package.json alongside a target such as main or module to
   "module": "dist/index.js",
   "types": "dist/index.d.ts"
  }
-
+```
 [Type checking](https://parceljs.org/languages/typescript/#type-checking)
 
 
