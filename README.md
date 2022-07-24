@@ -9,14 +9,15 @@
     - [Create html entry point](#create-html-entry-point)
     - [And our application components](#and-our-application-components)
   - [Run](#run)
+    - [Open application in default browser](#open-application-in-default-browser)
   - [Build](#build)
   - [Init **Typescript**](#init-typescript)
     - [Enable `jsx/tsx` support](#enable-jsxtsx-support)
   - [Other tweaks](#other-tweaks)
-    - [Generating typings.](#generating-typings)
-    - [Jest and ESLint](#jest-and-eslint)
+    - [Type checking](#type-checking)
       - [ESLint](#eslint)
       - [Jest](#jest)
+    - [All together](#all-together)
 
 ## Initialize the git repository
 
@@ -108,7 +109,7 @@ and add project requirements
 
 ```bash
 $ yarn add react react-dom
-$ yarn add parcel parcel-bundler typescript @types/react @types/react-dom --dev
+$ yarn add parcel typescript @types/react @types/react-dom --dev
 ```
 
 Now our `project.json` will looks like
@@ -124,19 +125,36 @@ Now our `project.json` will looks like
   "license": "MIT",
   "private": true,
   "dependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react": "*",
+    "react-dom": "*"
   },
   "devDependencies": {
-    "parcel": "^2.6.2",
-    "parcel-bundler": "^1.12.5",
-    "typescript": "^4.7.4",
-    "@types/react": "^18.0.15",
-    "@types/react-dom": "^18.0.6",
-    "process": "^0.11.10"
+    "parcel": "*",
+    "typescript": "*",
+    "@types/react": "*",
+    "@types/react-dom": "*",
+    "process": "*"
   }
 }
 ```
+
+Replace
+
+```json
+{
+  "main": "src/index.tsx"
+}
+```
+
+with
+
+```json
+{
+  "source": "src/index.html"
+}
+```
+
+because we build not module but application, and your build process will crash.
 
 ### Create source folder
 
@@ -167,7 +185,7 @@ With next basic content
     <div id="app">
       <!-- Your react app will be rendered here -->
     </div>
-    <script src="./index.tsx"></script>
+    <script type="module" src="./index.tsx"></script>
   </body>
 </html>
 ```
@@ -205,9 +223,9 @@ But let's add useful commands into our `package.json` file
 ```json
 {
   "scripts": {
-    "start": "parcel src/index.html --open",
+    "start": "parcel",
     "prebuild": "run-s clean",
-    "build": "parcel build src/index.html",
+    "build": "parcel build",
     "clean": "rimraf ./dist"
   }
 }
@@ -217,6 +235,18 @@ so we could run our app with just
 
 ```bash
 $ yarn start
+```
+
+### Open application in default browser
+
+Add `--open` to `parcel` command in your `package.json` file to open browser with your app after start the Parcel:
+
+```json
+{
+  "scripts": {
+    "start": "parcel --open"
+  }
+}
 ```
 
 ## Build
@@ -251,29 +281,31 @@ To enable `jsx/tsx` files support we must add `"jsx": "react"` config option in 
 
 ## Other tweaks
 
-### [Generating](https://parceljs.org/languages/typescript/#generating-typings) typings.
+### [Type checking](https://parceljs.org/languages/typescript/#type-checking)
 
-Use the types field in package.json alongside a target such as main or module to enable this.
+To perform type check add next line into `scripts` section of `package.json:`
 
 ```json
 {
-  "source": "src/index.tsx",
-  "module": "dist/index.js",
-  "types": "dist/index.d.ts"
+  "scripts": {
+    "check": "tsc --noEmit",
+  }
 }
 ```
 
-[Type checking](https://parceljs.org/languages/typescript/#type-checking)
-
-### Jest and ESLint
-
-Add dependencies for `jest` and `eslint`:
-
+Run typecheck check with
 ```bash
-$ yarn add jest eslint @eslint/create-config @types/jest eslint-plugin-react@latest, @typescript-eslint/eslint-plugin@latest, @typescript-eslint/parser@latest --dev
+$ yarn check
 ```
 
+
 #### ESLint
+
+Add dependencies for `eslint`:
+
+```bash
+$ yarn add eslint @eslint/create-config @typescript-eslint/eslint-plugin@latest @typescript-eslint/parser@latest --dev
+```
 
 Initialize the eslint config:
 
@@ -281,21 +313,40 @@ Initialize the eslint config:
 $ npx eslint --init
 ```
 
-`package.json:`
+Add script section in `package.json:`
+
+```json
+{
+  "scripts": {
+    "lint": "eslint --ext ts,tsx src",
+  }
+}
+```
+
+Run `eslint` check with
+```bash
+$ yarn lint
+```
+
+#### Jest
+
+Add dependencies for `jest`:
+
+```bash
+$ yarn add jest @types/jest eslint-plugin-react@latest --dev
+```
+
+Add script section in `package.json:`
 
 ```json
 {
   "scripts": {
     "test": "jest",
-    "lint": "eslint --ext ts,tsx src",
-    "ci": "yarn build && yarn test && yarn lint"
   }
 }
 ```
 
-#### Jest
-
-Add jest support for `eslint`. - add jest as env in `.eslintrc.json` or `js`/`yaml` file:
+Add jest support for `eslint`. To do that - add jest as env in `.eslintrc.json` or `js`/`yaml` file:
 
 ```json
 "env": {
@@ -303,7 +354,7 @@ Add jest support for `eslint`. - add jest as env in `.eslintrc.json` or `js`/`ya
 }
 ```
 
-And create empty test file `src/index.test.ts` in src folder.
+And create empty test file `src/index.test.ts` in src folder to avoid `jest` crash.
 
 ```typescript
 describe("Empty Test Collection", () => {
@@ -311,4 +362,29 @@ describe("Empty Test Collection", () => {
     expect(true).toBeTruthy();
   });
 });
+```
+
+Run tests with
+```bash
+$ yarn test
+```
+
+### All together
+
+To combine all previous commands and prepare/check your build for deploy - create `ci` script to combine all that commands in one:
+
+```json
+{
+  "scripts": {
+    "check": "tsc --noEmit",
+    "lint": "eslint --ext ts,tsx src",
+    "test": "jest",
+    "ci": "yarn build && yarn test && yarn lint && yarn check"
+  }
+}
+```
+
+And run it all together
+```bash
+$ yarn ci
 ```
