@@ -288,16 +288,16 @@ To perform type check add next line into `scripts` section of `package.json:`
 ```json
 {
   "scripts": {
-    "check": "tsc --noEmit",
+    "check": "tsc --noEmit"
   }
 }
 ```
 
 Run typecheck check with
+
 ```bash
 $ yarn check
 ```
-
 
 #### ESLint
 
@@ -318,12 +318,13 @@ Add script section in `package.json:`
 ```json
 {
   "scripts": {
-    "lint": "eslint --ext ts,tsx src",
+    "lint": "eslint --ext ts,tsx src"
   }
 }
 ```
 
 Run `eslint` check with
+
 ```bash
 $ yarn lint
 ```
@@ -341,7 +342,7 @@ Add script section in `package.json:`
 ```json
 {
   "scripts": {
-    "test": "jest",
+    "test": "jest"
   }
 }
 ```
@@ -365,6 +366,7 @@ describe("Empty Test Collection", () => {
 ```
 
 Run tests with
+
 ```bash
 $ yarn test
 ```
@@ -385,6 +387,7 @@ To combine all previous commands and prepare/check your build for deploy - creat
 ```
 
 And run it all together
+
 ```bash
 $ yarn ci
 ```
