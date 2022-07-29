@@ -1,0 +1,27 @@
+.UserInfoContainer {
+  color: white;
+}
+.UserInfo {
+  margin: 1em 0;
+}
+
+.UserInfoRow {
+  width: 100%;
+  min-height: 2em;
+  display: flex;
+  flex-flow: row nowrap;
+  gap: 1em;
+  justify-content: flex-start;
+
+}
+
+.UserInfoLabel {
+  display: block;
+  font-weight: bold;
+  width: auto;
+  flex-basis: 15%;
+}
+
+.UserInfoValue {
+    display: block;
+}

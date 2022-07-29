@@ -1,0 +1,67 @@
+.input {
+  font-family: Arial, Helvetica, sans-serif;
+  display: flex;
+  flex-flow: row nowrap;
+  /*
+  shorthand for
+  flex-wrap: wrap; 
+  flex-direction: row;
+  */
+  /* simulate for the label
+  margin-right: 2em;
+  */
+  gap: 1em;
+
+  justify-content: flex-start;
+  width: auto;
+  margin: 1em 0;
+}
+
+.input label {
+  display: block;
+  color: #444;
+  width: auto;
+  flex-basis: 20%;
+}
+
+.inputWrapper {
+  flex-basis: 80%;
+  width: 100%;
+  min-height: 2.6em;
+}
+
+.input input {
+  border-radius: 5px;
+  border: 1px solid #eee;
+  min-height: 1.7em;
+  width: 100%;
+}
+
+.inputCheckbox .inputWrapper,
+.inputRadio .inputWrapper {
+  flex-basis: 0;
+  min-height: auto;
+}
+
+.inputCheckbox input,
+.inputRadio input {
+  min-height: auto;
+  height: 1.2em;
+  width: 100%;
+  min-width: 20px;
+  margin-left: -0.5em;
+}
+
+.inputError {
+}
+
+.inputError input {
+  box-shadow: 0 0 5px -1px red;
+  border-color: red;
+}
+
+.inputErrorMessage {
+  display: block;
+  color: darkred;
+  font-size: 0.7em;
+}
