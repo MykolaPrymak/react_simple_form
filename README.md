@@ -237,6 +237,14 @@ so we could run our app with just
 $ yarn start
 ```
 
+To have ability to run scripts in serial mode with `npm-s` add we need to add `npm-run-all` npm package
+
+```bash
+$ yarn add npm-run-all --dev
+```
+
+
+
 ### Open application in default browser
 
 Add `--open` to `parcel` command in your `package.json` file to open browser with your app after start the Parcel:
