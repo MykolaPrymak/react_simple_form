@@ -118,7 +118,7 @@ const Form: React.FC<React.PropsWithChildren<Props>> = (props) => {
     {
       name: "sex",
       label: "Sex",
-      options: [{label: "Male", value: "male"}, {label: "Female", value: "female"}],
+      options: [{ label: "Male", value: "male" }, { label: "Female", value: "female" }],
       type: "radiogroup",
     },
     {
@@ -141,34 +141,25 @@ const Form: React.FC<React.PropsWithChildren<Props>> = (props) => {
 
   const updateFormValueHandler =
     (inputName: string): React.FormEventHandler<HTMLInputElement> =>
-    (event: React.FormEvent<HTMLInputElement>): void => {
-      console.log(
-        "updateFormValueHandler",
-        formFieldStatuses,
-        inputName,
-        event.currentTarget.value
-      );
-
-      const formFieldState = getFormInputStatus(inputName);
-      if (formFieldState) {
-        updateFormFieldStatus({
-          ...formFieldState,
-          value: event.currentTarget.value,
-        } as FormFieldState);
-      } else {
-        updateFormFieldStatus({
-          name: inputName,
-          value: event.currentTarget.value,
-        } as FormFieldState);
-      }
-    };
+      (event: React.FormEvent<HTMLInputElement>): void => {
+        const formFieldState = getFormInputStatus(inputName);
+        if (formFieldState) {
+          updateFormFieldStatus({
+            ...formFieldState,
+            value: event.currentTarget.value,
+          } as FormFieldState);
+        } else {
+          updateFormFieldStatus({
+            name: inputName,
+            value: event.currentTarget.value,
+          } as FormFieldState);
+        }
+      };
 
   const getFormValue = (
     formValue: InputValue,
     type: InputType = "text"
   ): InputValue | InputRadioValue => {
-    console.log({ formValue, type });
-
     switch (type) {
       case "checkbox":
         return !!formValue;
@@ -179,9 +170,7 @@ const Form: React.FC<React.PropsWithChildren<Props>> = (props) => {
 
   const onSubmitHandler = (evt: React.MouseEvent<HTMLButtonElement>): void => {
     evt.preventDefault();
-
     const isFormValid = validateForm(formInputs);
-    console.log("onSubmitHandler", isFormValid, formInputs);
 
     if (props.onSubmit && isFormValid) {
       const formData = formInputs.map((formInput) => {
@@ -195,8 +184,6 @@ const Form: React.FC<React.PropsWithChildren<Props>> = (props) => {
         };
       });
 
-      console.log("formData", formData);
-
       props.onSubmit(formData);
       setFormFieldStatuses([]);
     }
@@ -209,8 +196,6 @@ const Form: React.FC<React.PropsWithChildren<Props>> = (props) => {
 
     cleanFormFieldStatuses.push(formFieldState);
 
-    console.log("updateFormValue formFieldState -> ", formFieldState);
-
     setFormFieldStatuses(cleanFormFieldStatuses);
   };
 
@@ -222,7 +207,6 @@ const Form: React.FC<React.PropsWithChildren<Props>> = (props) => {
   };
 
   const validateForm = (formInputs: FormInputList): boolean => {
-    console.log("validateForm");
     return !formInputs
       .filter((formInput) => formInput.required && formInput.validator)
       .find((formInput) => !isFormInputValid(formInput.name));
@@ -237,8 +221,6 @@ const Form: React.FC<React.PropsWithChildren<Props>> = (props) => {
       isValid = formInput.validator(formInputStatus);
     }
 
-    console.log("isFormInputValid", formInputStatus, inputName, isValid);
-
     return isValid;
   };
 
@@ -250,8 +232,6 @@ const Form: React.FC<React.PropsWithChildren<Props>> = (props) => {
       valid: isValid,
     });
   };
-
-  console.log("render", formFieldStatuses);
 
   return (
     <div>
@@ -270,11 +250,11 @@ const Form: React.FC<React.PropsWithChildren<Props>> = (props) => {
                 {...formInput}
                 key={`input_${formInput.name}_${idx}`}
                 value={formInputValue}
-                onClick={() =>
+                onChange={(evt) =>
                   updateFormFieldStatus({
                     ...currentFormInputStatus,
                     name: formInput.name,
-                    value: isChecked ? undefined : formInputValue,
+                    value: evt.currentTarget.checked ? formInputValue : undefined,
                   })
                 }
                 checked={isChecked}
@@ -283,29 +263,23 @@ const Form: React.FC<React.PropsWithChildren<Props>> = (props) => {
               />
             );
           } else if (formInput.type === "radiogroup") {
-              return (<Input
-                {...formInput}
-                key={`input_${formInput.name}_${idx}`}
-                label={formInput.label}
-                value={currentFormInputStatus.value}
-                onClick={evt =>
-                  updateFormFieldStatus({
-                    ...currentFormInputStatus,
-                    name: formInput.name,
-                    value: evt.currentTarget.value,
-                  })
-                }
-                onBlur={validateFormInputHandler(formInput.name)}
-                valid={currentFormInputStatus?.valid}
-              />
+            return (<Input
+              {...formInput}
+              key={`input_${formInput.name}_${idx}`}
+              label={formInput.label}
+              value={currentFormInputStatus.value}
+              onChange={evt =>
+                updateFormFieldStatus({
+                  ...currentFormInputStatus,
+                  name: formInput.name,
+                  value: evt.currentTarget.value,
+                })
+              }
+              onBlur={validateFormInputHandler(formInput.name)}
+              valid={currentFormInputStatus?.valid}
+            />
             );
           } else {
-            console.log(
-              "render input",
-              formInput.name,
-              currentFormInputStatus?.value
-            );
-
             return (
               <Input
                 {...formInput}
