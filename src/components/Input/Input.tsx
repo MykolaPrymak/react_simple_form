@@ -20,6 +20,7 @@ const Input: React.FC<React.PropsWithChildren<Props>> = (props) => {
     return <>
       {options.map((option, idx) => {
         return (<InputElement {...props}
+          key={`${props.name}_${props.value}_${idx}`}
           label={option.label}
           value={option.value}
           type="radio"

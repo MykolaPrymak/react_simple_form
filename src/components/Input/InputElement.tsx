@@ -51,7 +51,7 @@ const Input: React.FC<React.PropsWithChildren<Props>> = (props) => {
     label = "",
     placeholder = "",
     required = false,
-    checked = false,
+    checked,
     id = `input_${Math.random()}_id`,
     valid = true,
     validationMessage = "",
@@ -62,9 +62,8 @@ const Input: React.FC<React.PropsWithChildren<Props>> = (props) => {
 
   return (
     <div
-      className={`${styles.input} ${getInputTypeClass(styles, type)} ${
-        !valid ? styles.inputError : ""
-      }`}
+      className={`${styles.input} ${getInputTypeClass(styles, type)} ${!valid ? styles.inputError : ""
+        }`}
     >
       <label htmlFor={id}>
         {label && `${label}${label && required ? "*" : ""}:`}
