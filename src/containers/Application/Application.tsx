@@ -4,7 +4,7 @@ import Form, { FormData } from "../../components/Form";
 import UserInfo from "../../components/UserInfo";
 import "./application.css";
 
-/*
+/*ript to run this application.</noscript> <div id="app">  </div> <script type="module" src="index.12e259af.js"></script> </body></html>
 Create a react project using the create-react-app utility script. After that create the following components:
 - Card component that will be used as a wrapper. The card will be rectangular with rounded corners and can accept as a prop the background color.
 - Button component that accepts as props the text of button,
@@ -68,7 +68,7 @@ const Application: React.FC<Record<string, never>> = () => {
   ];
   const [formsData, setFormsData] = useState<FormData[][]>([]);
   const onSubmit = (formData: FormData[]) => {
-    setFormsData([formData, ...formsData]);
+    setFormsData([...formsData, formData]);
   };
 
   return (

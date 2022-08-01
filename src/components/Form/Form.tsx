@@ -118,9 +118,8 @@ const Form: React.FC<React.PropsWithChildren<Props>> = (props) => {
     {
       name: "sex",
       label: "Sex",
-      labels: ["Male", "Female"],
+      options: [{label: "Male", value: "male"}, {label: "Female", value: "female"}],
       type: "radiogroup",
-      values: ["male", "female"],
     },
     {
       name: "notification",
@@ -284,30 +283,22 @@ const Form: React.FC<React.PropsWithChildren<Props>> = (props) => {
               />
             );
           } else if (formInput.type === "radiogroup") {
-            const radioGroupValues = formInput?.values || [];
-            return radioGroupValues.map((value, idx) => (
-              <Input
+              return (<Input
                 {...formInput}
-                key={`input_${formInput.name}_${value}_${idx}`}
-                value={value}
-                onClick={() =>
+                key={`input_${formInput.name}_${idx}`}
+                label={formInput.label}
+                value={currentFormInputStatus.value}
+                onClick={evt =>
                   updateFormFieldStatus({
                     ...currentFormInputStatus,
                     name: formInput.name,
-                    value: value,
+                    value: evt.currentTarget.value,
                   })
                 }
-                checked={currentFormInputStatus?.value === value}
                 onBlur={validateFormInputHandler(formInput.name)}
                 valid={currentFormInputStatus?.valid}
-                label={
-                  formInput?.labels?.[idx]
-                    ? formInput.labels[idx]
-                    : (value as string)
-                }
-                type="radio"
               />
-            ));
+            );
           } else {
             console.log(
               "render input",
