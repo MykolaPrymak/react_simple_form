@@ -29,10 +29,7 @@ export interface FormFieldState {
 export interface FormInputListItem extends Omit<InputProps, "label" | "value"> {
   name: string;
   label?: string;
-  labels?: string[];
   value?: InputValue;
-  values?: InputValue[];
-  //defaultValue?: InputValue;
   validator?: (field: FormFieldState) => boolean;
 }
 
@@ -170,7 +167,9 @@ const Form: React.FC<React.PropsWithChildren<Props>> = (props) => {
 
   const onSubmitHandler = (evt: React.MouseEvent<HTMLButtonElement>): void => {
     evt.preventDefault();
-    const isFormValid = validateForm(formInputs);
+
+    const invalidFormInputNames = validateFormInputs(formInputs).filter(({ valid }) => !valid).map(({ name }) => name);
+    const isFormValid = invalidFormInputNames.length === 0;
 
     if (props.onSubmit && isFormValid) {
       const formData = formInputs.map((formInput) => {
@@ -186,6 +185,21 @@ const Form: React.FC<React.PropsWithChildren<Props>> = (props) => {
 
       props.onSubmit(formData);
       setFormFieldStatuses([]);
+    }
+
+    // Update form fields validation status
+    if (!isFormValid) {
+      // Update invalid fields with valid = false
+      const invalidFormFieldStatuses = invalidFormInputNames.map(formInputName => {
+        const formInputStatus = getFormInputStatus(formInputName);
+
+        return { ...formInputStatus, valid: false } as FormFieldState;
+      });
+
+      // Remove old statuses and add updated
+      const updatedFormFieldStatuses = [...formFieldStatuses.filter(({ name }) => !invalidFormInputNames.includes(name)), ...invalidFormFieldStatuses];
+
+      setFormFieldStatuses(updatedFormFieldStatuses);
     }
   };
 
@@ -206,10 +220,10 @@ const Form: React.FC<React.PropsWithChildren<Props>> = (props) => {
     return !!s.match(/^[a-zA-Z\s]+$/);
   };
 
-  const validateForm = (formInputs: FormInputList): boolean => {
-    return !formInputs
+  const validateFormInputs = (formInputs: FormInputList): FormInputList => {
+    return formInputs
       .filter((formInput) => formInput.required && formInput.validator)
-      .find((formInput) => !isFormInputValid(formInput.name));
+      .map(formInput => ({ ...formInput, valid: isFormInputValid(formInput.name) }));
   };
 
   const isFormInputValid = (inputName: string): boolean => {
