@@ -10,7 +10,7 @@
   "scripts": {
     "start": "parcel",
     "prebuild": "run-s clean",
-    "build": "parcel build",
+    "build": "parcel build --public-url './'",
     "clean": "rimraf ./dist",
     "check": "tsc --noEmit",
     "test": "jest",
