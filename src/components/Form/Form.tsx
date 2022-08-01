@@ -6,39 +6,9 @@ import Input, {
   InputType,
   InputValue,
   InputRadioValue,
-  Props as InputProps,
 } from "../Input";
 import Button from "../Button";
-
-export interface FormInputProp {
-  label?: string;
-  type?: InputType;
-}
-
-export interface FormButtonProp {
-  label?: string;
-  type?: InputType;
-}
-
-export interface FormFieldState {
-  name: string;
-  value: InputValue;
-  valid?: boolean;
-}
-
-export interface FormInputListItem extends Omit<InputProps, "label" | "value"> {
-  name: string;
-  label?: string;
-  value?: InputValue;
-  validator?: (field: FormFieldState) => boolean;
-}
-
-export type FormInputList = FormInputListItem[];
-
-export interface FormData
-  extends Pick<FormInputListItem, "name" | "label" | "type"> {
-  value: InputValue | InputRadioValue;
-}
+import { FormFieldState, FormInputList, FormData} from './FormTypes';
 
 export interface Props {
   onSubmit?: (formData: FormData[]) => void;
