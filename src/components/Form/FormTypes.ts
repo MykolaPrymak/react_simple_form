@@ -1,5 +1,4 @@
 import {
-    InputType,
     InputValue,
     InputRadioValue,
     Props as InputProps,

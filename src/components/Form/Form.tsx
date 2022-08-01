@@ -2,17 +2,28 @@ import React, { useState } from "react";
 import * as styles from "./form.module.css";
 import Heading from "../Heading";
 import SubHeading from "../SubHeading";
-import Input, {
-  InputType,
-  InputValue,
-  InputRadioValue,
-} from "../Input";
+import Input from "../Input";
 import Button from "../Button";
-import { FormFieldState, FormInputList, FormData} from './FormTypes';
+import { FormFieldState, FormInputList, FormData } from './FormTypes';
+
+import {
+  getFormInputStatus,
+  getFormValue,
+  updateFormFieldStatus,
+  validateFormInputs,
+  isFormInputValid,
+} from './FormUtils';
 
 export interface Props {
   onSubmit?: (formData: FormData[]) => void;
 }
+
+const stringValidator = (s: string): boolean => {
+  if (!s) {
+      return false;
+  }
+  return !!s.match(/^[a-zA-Z\s]+$/);
+};
 
 /*
 - Render a form inside the Card component.
@@ -96,54 +107,16 @@ const Form: React.FC<React.PropsWithChildren<Props>> = (props) => {
     },
   ];
 
-  const getFormInputStatus = (inputName: string): FormFieldState => {
-    const fieldStatus = formFieldStatuses.find(
-      ({ name }) => name === inputName
-    );
-
-    return fieldStatus
-      ? fieldStatus
-      : ({ name: inputName, value: "" } as FormFieldState);
-  };
-
-  const updateFormValueHandler =
-    (inputName: string): React.FormEventHandler<HTMLInputElement> =>
-      (event: React.FormEvent<HTMLInputElement>): void => {
-        const formFieldState = getFormInputStatus(inputName);
-        if (formFieldState) {
-          updateFormFieldStatus({
-            ...formFieldState,
-            value: event.currentTarget.value,
-          } as FormFieldState);
-        } else {
-          updateFormFieldStatus({
-            name: inputName,
-            value: event.currentTarget.value,
-          } as FormFieldState);
-        }
-      };
-
-  const getFormValue = (
-    formValue: InputValue,
-    type: InputType = "text"
-  ): InputValue | InputRadioValue => {
-    switch (type) {
-      case "checkbox":
-        return !!formValue;
-      default:
-        return formValue;
-    }
-  };
 
   const onSubmitHandler = (evt: React.MouseEvent<HTMLButtonElement>): void => {
     evt.preventDefault();
 
-    const invalidFormInputNames = validateFormInputs(formInputs).filter(({ valid }) => !valid).map(({ name }) => name);
+    const invalidFormInputNames = validateFormInputs(formFieldStatuses, formInputs).filter(({ valid }) => !valid).map(({ name }) => name);
     const isFormValid = invalidFormInputNames.length === 0;
 
     if (props.onSubmit && isFormValid) {
       const formData = formInputs.map((formInput) => {
-        const formFieldState = getFormInputStatus(formInput.name);
+        const formFieldState = getFormInputStatus(formFieldStatuses, formInput.name);
 
         return {
           name: formInput.name,
@@ -161,7 +134,7 @@ const Form: React.FC<React.PropsWithChildren<Props>> = (props) => {
     if (!isFormValid) {
       // Update invalid fields with valid = false
       const invalidFormFieldStatuses = invalidFormInputNames.map(formInputName => {
-        const formInputStatus = getFormInputStatus(formInputName);
+        const formInputStatus = getFormInputStatus(formFieldStatuses, formInputName);
 
         return { ...formInputStatus, valid: false } as FormFieldState;
       });
@@ -173,57 +146,43 @@ const Form: React.FC<React.PropsWithChildren<Props>> = (props) => {
     }
   };
 
-  const updateFormFieldStatus = (formFieldState: FormFieldState): void => {
-    const cleanFormFieldStatuses = formFieldStatuses.filter(
-      ({ name: fieldName }) => fieldName !== formFieldState.name
-    );
+  const updateFormValueHandler =
+    (inputName: string): React.FormEventHandler<HTMLInputElement> =>
+      (event: React.FormEvent<HTMLInputElement>): void => {
+        const formFieldState = getFormInputStatus(formFieldStatuses, inputName);
+        let updatedFormFieldStatuses: FormFieldState[];
 
-    cleanFormFieldStatuses.push(formFieldState);
+        if (formFieldState) {
+          updatedFormFieldStatuses = updateFormFieldStatus(formFieldStatuses, {
+            ...formFieldState,
+            value: event.currentTarget.value,
+          } as FormFieldState);
+        } else {
+          updatedFormFieldStatuses = updateFormFieldStatus(formFieldStatuses, {
+            name: inputName,
+            value: event.currentTarget.value,
+          } as FormFieldState);
+        }
+        setFormFieldStatuses(updatedFormFieldStatuses);
 
-    setFormFieldStatuses(cleanFormFieldStatuses);
-  };
+      };
 
-  const stringValidator = (s: string): boolean => {
-    if (!s) {
-      return false;
-    }
-    return !!s.match(/^[a-zA-Z\s]+$/);
-  };
 
-  const validateFormInputs = (formInputs: FormInputList): FormInputList => {
-    return formInputs
-      .filter((formInput) => formInput.required && formInput.validator)
-      .map(formInput => ({ ...formInput, valid: isFormInputValid(formInput.name) }));
-  };
-
-  const isFormInputValid = (inputName: string): boolean => {
-    const formInput = formInputs.find(({ name }) => name === inputName);
-    const formInputStatus = getFormInputStatus(inputName);
-
-    let isValid = true;
-    if (formInput && formInput.validator && formInputStatus) {
-      isValid = formInput.validator(formInputStatus);
-    }
-
-    return isValid;
-  };
-
-  const validateFormInputHandler = (inputName: string) => (): void => {
-    const isValid = isFormInputValid(inputName);
-
-    updateFormFieldStatus({
-      ...getFormInputStatus(inputName),
-      valid: isValid,
-    });
+  const validateFormInputHandler = (formInputs: FormInputList, inputName: string) => (): void => {
+    setFormFieldStatuses(updateFormFieldStatus(formFieldStatuses, {
+      ...getFormInputStatus(formFieldStatuses, inputName),
+      valid: isFormInputValid(formFieldStatuses, formInputs, inputName),
+    }));
   };
 
   return (
     <div>
       <Heading>Create User</Heading>
       <SubHeading>Fill the form</SubHeading>
+
       <form className={styles.form} method="POST">
         {formInputs.map((formInput, idx) => {
-          const currentFormInputStatus = getFormInputStatus(formInput.name);
+          const currentFormInputStatus = getFormInputStatus(formFieldStatuses, formInput.name);
 
           if (formInput.type === "checkbox") {
             const formInputValue = formInput.value || "on";
@@ -235,14 +194,14 @@ const Form: React.FC<React.PropsWithChildren<Props>> = (props) => {
                 key={`input_${formInput.name}_${idx}`}
                 value={formInputValue}
                 onChange={(evt) =>
-                  updateFormFieldStatus({
+                  setFormFieldStatuses(updateFormFieldStatus(formFieldStatuses, {
                     ...currentFormInputStatus,
                     name: formInput.name,
                     value: evt.currentTarget.checked ? formInputValue : undefined,
-                  })
+                  }))
                 }
                 checked={isChecked}
-                onBlur={validateFormInputHandler(formInput.name)}
+                onBlur={validateFormInputHandler(formInputs, formInput.name)}
                 valid={currentFormInputStatus?.valid}
               />
             );
@@ -253,13 +212,13 @@ const Form: React.FC<React.PropsWithChildren<Props>> = (props) => {
               label={formInput.label}
               value={currentFormInputStatus.value}
               onChange={evt =>
-                updateFormFieldStatus({
+                setFormFieldStatuses(updateFormFieldStatus(formFieldStatuses, {
                   ...currentFormInputStatus,
                   name: formInput.name,
                   value: evt.currentTarget.value,
-                })
+                }))
               }
-              onBlur={validateFormInputHandler(formInput.name)}
+              onBlur={validateFormInputHandler(formInputs, formInput.name)}
               valid={currentFormInputStatus?.valid}
             />
             );
@@ -272,7 +231,7 @@ const Form: React.FC<React.PropsWithChildren<Props>> = (props) => {
                 value={currentFormInputStatus?.value}
                 validationMessage={formInput?.validationMessage}
                 onChange={updateFormValueHandler(formInput.name)}
-                onBlur={validateFormInputHandler(formInput.name)}
+                onBlur={validateFormInputHandler(formInputs, formInput.name)}
               />
             );
           }
