@@ -15,15 +15,9 @@ import {
 } from './FormUtils';
 
 export interface Props {
+  formInputs: FormInputList;
   onSubmit?: (formData: FormData[]) => void;
 }
-
-const stringValidator = (s: string): boolean => {
-  if (!s) {
-      return false;
-  }
-  return !!s.match(/^[a-zA-Z\s]+$/);
-};
 
 /*
 - Render a form inside the Card component.
@@ -37,76 +31,7 @@ const Form: React.FC<React.PropsWithChildren<Props>> = (props) => {
     []
   );
 
-  const formInputs: FormInputList = [
-    {
-      name: "name",
-      label: "Name",
-      required: true,
-      validator: (field) => {
-        return stringValidator(field.value as string);
-      },
-      validationMessage:
-        "Name should be an string without any numbers or special characters",
-    },
-    {
-      name: "surname",
-      label: "Surname",
-      required: true,
-      validator: (field) => {
-        return stringValidator(field.value as string);
-      },
-      validationMessage:
-        "Surname should be an string without any numbers or special characters",
-    },
-    {
-      name: "email",
-      label: "Email",
-      required: true,
-      validator: (field) => {
-        const email = field.value as string;
-        if (!email) {
-          return false;
-        }
-        return !!email.match(/^[\w.-\\+]+@[\w.-]+$/);
-      },
-      validationMessage:
-        "Email should contain the @ symbol and the recipient and domain name",
-    },
-    {
-      name: "age",
-      label: "Age",
-      required: true,
-      validator: (field) => {
-        const age = parseInt(field.value as string);
-
-        return !isNaN(age) && age > 0;
-      },
-      validationMessage: "Age must be a number greater than zero",
-    },
-    {
-      name: "color",
-      label: "Favorite color",
-      required: true,
-      validator: (field) => {
-        return stringValidator(field.value as string);
-      },
-      validationMessage:
-        "Favorite color should be an string without any numbers or special characters",
-    },
-    {
-      name: "sex",
-      label: "Sex",
-      options: [{ label: "Male", value: "male" }, { label: "Female", value: "female" }],
-      type: "radiogroup",
-    },
-    {
-      name: "notification",
-      label: "Receive notifications",
-      type: "checkbox",
-      value: "notification",
-    },
-  ];
-
+  const formInputs = props.formInputs;
 
   const onSubmitHandler = (evt: React.MouseEvent<HTMLButtonElement>): void => {
     evt.preventDefault();
